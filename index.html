@@ -652,8 +652,17 @@ tr.incs td{background:var(--ok-l)}
 html{-webkit-text-size-adjust:100%}
 button,a,.opt,.bopt,.node,summary{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 p,li,dd{text-wrap:pretty}
-.topbar{background:color-mix(in srgb,var(--bar) 80%,transparent);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px)}
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.topbar{background:var(--bar)}}
+/* Zgornja vrstica. Privzeto: polna barva (= theme-color), da se v Safariju zlije s pasom z uro.
+   Različica »steklo« (data-bar="steklo"): vrstica sama nima ozadja; en sam prosojen stekleni sloj
+   (::before) sega od spodnjega roba vrstice 200 px navzgor, tudi pod uro, zato je zgornji del en kos. */
+.topbar{background:var(--bar)}
+:root[data-bar="steklo"] .topbar{background:transparent;border-bottom-color:color-mix(in srgb,var(--line) 70%,transparent)}
+:root[data-bar="steklo"] .topbar::before{content:"";position:absolute;z-index:-1;left:0;right:0;bottom:0;top:-200px;background:color-mix(in srgb,var(--bar) 76%,transparent);-webkit-backdrop-filter:saturate(1.6) blur(16px);backdrop-filter:saturate(1.6) blur(16px);pointer-events:none}
+/* Kot aplikacija z začetnega zaslona stran sega pod uro, zato je tam steklo vedno vklopljeno. */
+@media (display-mode: standalone){
+  .topbar{background:transparent;border-bottom-color:color-mix(in srgb,var(--line) 70%,transparent)}
+  .topbar::before{content:"";position:absolute;z-index:-1;left:0;right:0;bottom:0;top:-200px;background:color-mix(in srgb,var(--bar) 76%,transparent);-webkit-backdrop-filter:saturate(1.6) blur(16px);backdrop-filter:saturate(1.6) blur(16px);pointer-events:none}
+}
 .tbtn{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:12px;border:0;background:transparent;color:var(--muted);cursor:pointer;flex:none;transition:background .15s ease,color .15s ease}
 .tbtn:hover{background:var(--blue-l);color:var(--blue)}
 .tbtn svg{width:21px;height:21px}
@@ -781,7 +790,9 @@ body[data-view="lekcija"] .lnav{display:block}
 }
 @media (max-width:380px){.lnav .btn span{display:none}.brand small{display:none}}
 </style>
-<script>try{var _t=localStorage.getItem("os1kol:theme");if(_t)document.documentElement.setAttribute("data-theme",_t);}catch(e){}</script>
+<script>try{var _t=localStorage.getItem("os1kol:theme");if(_t)document.documentElement.setAttribute("data-theme",_t);}catch(e){}
+/* Različica zgornje vrstice: ?vrstica=steklo ali ?vrstica=polna (izbira se zapomni). */
+try{var _v=new URLSearchParams(location.search).get("vrstica");if(_v==="steklo"||_v==="polna")localStorage.setItem("os1kol:bar",_v);var _b=localStorage.getItem("os1kol:bar");if(_b)document.documentElement.setAttribute("data-bar",_b);}catch(e){}</script>
 </head>
 <body>
 <div class="splash" aria-hidden="true">
